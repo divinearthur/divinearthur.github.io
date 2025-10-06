@@ -8,22 +8,21 @@
       .box {
         width: 70px;
         height: 70px;
-        background-color: rgb(40, 1, 55);
+        background-color: rgb(124, 3, 171);
         font-size: 300%;
         text-align: center;
         user-select: none;
         display: block;
         position: absolute;
         top: 100px;
-        var positionY;
-        var speedY;
-        function moveBoxTo(newPositionX, newPositionY) {
-        box.css("left", newPositionX);
-        box.css("top", newPositionY);
         }
         body {background-image: url("https://img.freepik.com/premium-photo/beautiful-scenery-purple-sky-twilight-dark-night_1122198-230.jpg");
         background-color: #37054d;
-}
+        background-position: center;
+        background-size: cover;
+        }
+        
+
     
         /* Change me! */
         left: 0px;
@@ -113,9 +112,10 @@
         if (positionX >= boardWidth) {
             // Code to reverse speed goes here
             speed *= -1;
+
             }
 
-
+         
        
 
 
