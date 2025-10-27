@@ -16,11 +16,11 @@ $(function () {
       setInterval(main, 1000 / frameRate);
     }
 
-    // Create walls - do not delete or modify this code
-    createPlatform(-50, -50, canvas.width + 100, 50); // top wall
-    createPlatform(-50, canvas.height - 10, canvas.width + 100, 200, "navy"); // bottom wall
-    createPlatform(-50, -50, 50, canvas.height + 500); // left wall
-    createPlatform(canvas.width, -50, 50, canvas.height + 100); // right wall
+     // Create walls - do not delete or modify this code
+     createPlatform(-50, -50, canvas.width + 100, 50); // top wall
+     createPlatform(-50, canvas.height - 10, canvas.width + 100, 200, "navy"); // bottom wall
+     createPlatform(-50, -50, 50, canvas.height + 500); // left wall
+     createPlatform(canvas.width, -50, 50, canvas.height + 100); // right wall
 
     //////////////////////////////////
     // ONLY CHANGE BELOW THIS POINT //
@@ -32,28 +32,28 @@ $(function () {
 
     // TODO 2 - Create Platforms
 
-  createPlatform(1350, 400, 50, 50, "DarkOrchid");
+   createPlatform(1350, 400, 50, 50, "DarkOrchid");
   
-createPlatform(300, 660, 100, 20, "DarkOrchid");      
-createPlatform(450, 560, 100, 20, "Lavender");
-createPlatform(600, 460, 100, 20, "DarkOrchid");
-createPlatform(750, 360, 100, 20, "Lavender");
-createPlatform(900, 260, 100, 20, "DarkOrchid");
+   createPlatform(300, 660, 100, 20, "DarkOrchid");      
+   createPlatform(450, 560, 100, 20, "Lavender");
+   createPlatform(600, 460, 100, 20, "DarkOrchid");
+   createPlatform(750, 360, 100, 20, "Lavender");
+   createPlatform(900, 260, 100, 20, "DarkOrchid");
 
 
 
     // TODO 3 - Create Collectables
 
-createCollectable("Cookie", 1350, 50);
-createCollectable("diamond", 200, 170, 0.5, 0.7);
+   createCollectable("steve", 1350, 50);
+   createCollectable("diamond", 200, 170, 0.5, 0.7);
+   createCollectable("kennedi", 100, 270, 0.5, 0.7);
 
 
     
     // TODO 4 - Create Cannons
-createCannon("left", 400, 1500);
-createCannon("bottom", 600, 1200);
-createCannon("top", 200, 1000);
-createCannon("right", 300, 100);
+   createCannon("left", 400, 1500);
+   createCannon("top", 200, 1000);
+   createCannon("right", 300, 100);
 
 
     
