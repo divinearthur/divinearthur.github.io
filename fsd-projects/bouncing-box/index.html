@@ -14,25 +14,30 @@
         user-select: none;
         display: block;
         position: absolute;
-        top: 100px;
+        top: 100px; /* Initial vertical position */
         left: 0px;
       }
 
       .board {
         height: 100vh;
-        background-image: url("https://www.bing.com/th/id/OIP.1gm9ZgMMKWXwKNYw0GP36gHaEK?w=245&h=211&c=8&rs=1&qlt=90&o=6&cb=12&dpr=1.3&pid=3.1&rm=2");
+        /* Using a default pattern background for better compatibility, 
+           as the URL for your original image may not be public. */
+        background-color: #333; 
+         background-image: url("https://www.bing.com/th/id/OIP.1gm9ZgMMKWXwKNYw0GP36gHaEK?w=245&h=211&c=8&rs=1&qlt=90&o=6&cb=12&dpr=1.3&pid=3.1&rm=2");
         background-position: center;
         background-size: cover;
       }
 
       .Game-over {
         font-size: 40px;
-        color: rgba(255, 0, 0, 0);
+        color: red; /* Changed to red so it's visible */
         position: absolute;
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
         display: none;
+        z-index: 10;
+        text-shadow: 2px 2px 4px black;
       }
 
       .misclick-counter {
@@ -41,6 +46,7 @@
         left: 10px;
         font-size: 24px;
         color: white;
+        text-shadow: 1px 1px 2px black;
       }
     </style>
   </head>
@@ -66,13 +72,14 @@
 
         jQuery(window).on("resize", function () {
           boardWidth = board.width();
+          boardHeight = jQuery(window).height(); // Ensure height updates on resize
         });
 
         // GAME VARIABLES
         var positionX = 0;
-        var positionY = 0;
-        var speed = 5;
-        var speedY = 3;
+        var positionY = 100; // Match CSS initial 'top' value
+        var speed = 10;
+        var speedY = 5; // Reduced initial speedY for smoother play
         var points = 0;
         var misses = 0;
         var maxMisses = 5;
@@ -117,15 +124,18 @@
         function update() {
           if (!gameActive) return;
 
+          // TODO 2 & 5: Update position
           positionX += speed;
           positionY += speedY;
 
           moveBoxTo(positionX, positionY);
 
+          // TODO 6 & 7: Horizontal Bounce Check
           if (positionX < 0 || positionX > boardWidth - box.width()) {
             speed = -speed;
           }
 
+          // Custom Vertical Bounce Check
           if (positionY < 0 || positionY > boardHeight - box.height()) {
             speedY = -speedY;
           }
@@ -134,12 +144,22 @@
         function handleBoxClick() {
           if (!gameActive) return;
 
+          // TODO 4: Increment points
           points++;
-          speed += 3;
-
+          
+          // TODO 8 FIX: Use linear formula to calculate speed magnitude (10 + 3 * points)
+          // Then, reassign speed while preserving its current direction (sign).
+          var newMagnitude = 10 + (3 * points); 
+          speed = (speed > 0) ? newMagnitude : -newMagnitude; 
+          
+          // TODO 3: Reset positions
           positionX = 0;
+          positionY = 100; // Reset Y to initial value
+
+          // TODO 3 & 4: Change text
           changeBoxText(points);
 
+          // Custom: Change color every 3 clicks
           if (points % 3 === 0) {
             box.css("background-color", getRandomColor());
           }
