@@ -1,5 +1,6 @@
 var init = function (window) {
     'use strict';
+    
     var 
         draw = window.opspark.draw,
         physikz = window.opspark.racket.physikz,
@@ -8,93 +9,111 @@ var init = function (window) {
         canvas = app.canvas, 
         view = app.view,
         fps = draw.fps('#000');
-        
-    
-    window.opspark.makeGame = function() {
-        
-        window.opspark.game = {};
-        var game = window.opspark.game;
-        
-        ///////////////////
-        // PROGRAM SETUP //
-        ///////////////////
-        
-        // TODO 1 : Declare and initialize our variables
 
+    //========================
+    // Variables
+    //========================
+    // TODO 1: Declare our variables
+    var circle; 
+    var circles = [];
+    var game;        // <-- Added so update() always has access
 
-
-        // TODO 2 : Create a function that draws a circle 
-        
-
-
-        // TODO 3 : Call the drawCircle() function
-
-
-
-        // TODO 7 : Use a loop to create multiple circles
-
-
-
-
-        ///////////////////
-        // PROGRAM LOGIC //
-        ///////////////////
-        
-        /* 
-        This Function is called 60 times/second, producing 60 frames/second.
-        In each frame, for every circle, it should redraw that circle
-        and check to see if it has drifted off the screen.         
-        */
-        function update() {
-            // TODO 4 : Update the position of each circle using physikz.updatePosition()
-
-            
-            // TODO 5 : Call game.checkCirclePosition() on your circles
-           
-
-            // TODO 8 / TODO 9 : Iterate over the array
-           
-            
+    // Helper function: generate random hex color
+    function getRandomColor() {
+        var letters = '0123456789ABCDEF';
+        var color = '#';
+        for (var i = 0; i < 6; i++) {
+            color += letters[Math.floor(Math.random() * 16)];
         }
-    
-        /* 
-        This Function should check the position of a circle that is passed to the 
-        Function. If that circle drifts off the screen, this Function should move
-        it to the opposite side of the screen.
-        */
-        game.checkCirclePosition = function(circle) {
+        return color;
+    }
 
-            // if the circle has gone past the RIGHT side of the screen then place it on the LEFT
-            if ( circle.x > canvas.width ) {
+    //========================
+    // Draw one circle
+    //========================
+    // TODO 2: Create a Function to Draw a Circle
+    function drawCircle() {
+        var radius = Math.floor(Math.random() * 21) + 10;
+        var color = getRandomColor();
+
+        // Code from TODO 2: Draw circle, add velocity, add to view, push to array
+        circle = draw.randomCircleInArea(canvas, true, true, color, 2, radius);
+        physikz.addRandomVelocity(circle, canvas, 5, 5);
+        view.addChild(circle);
+        circles.push(circle);
+    }
+
+    // Draw 100 circles
+    // DELETE OR COMMENT OUT REPETITIVE CALLS FROM TODO 3
+    // TODO 7: Draw 100 circles using a loop
+    for (var i = 0; i < 100; i++) {
+        drawCircle();
+    }
+
+    //========================
+    // Update loop
+    //========================
+    function update() {
+        if (!game) return; // Prevents early crashes
+
+        // TODO 8 & 9: Iterate and update all circles (replaces TODO 4 & 5)
+        for (var i = 0; i < circles.length; i++) {
+            var currentCircle = circles[i]; 
+            
+            // TODO 4: Move the circle
+            physikz.updatePosition(currentCircle);
+            
+            // TODO 5: Keep the circle in bounds
+            game.checkCirclePosition(currentCircle);
+        }
+    }
+
+    //========================
+    // Game object
+    //========================
+    window.opspark.makeGame = function() {
+
+        window.opspark.game = {};
+        game = window.opspark.game;
+
+        // TODO 6: Loop from All Sides
+        game.checkCirclePosition = function(circle) {
+            // Right Boundary: wraps to left
+            if (circle.x > canvas.width) {
                 circle.x = 0;
             }
-            
-            // TODO 6 : YOUR CODE STARTS HERE //////////////////////
-            
+            // Left Boundary: wraps to right
+            if (circle.x < 0) {
+                circle.x = canvas.width;
+            }
+            // Bottom Boundary: wraps to top
+            if (circle.y > canvas.height) {
+                circle.y = 0;
+            }
+            // Top Boundary: wraps to bottom
+            if (circle.y < 0) {
+                circle.y = canvas.height;
+            }
+        };
 
-
-            // YOUR TODO 6 CODE ENDS HERE //////////////////////////
-        }
-        
-        /////////////////////////////////////////////////////////////
-        // --- NO CODE BELOW HERE  --- DO NOT REMOVE THIS CODE --- //
-        /////////////////////////////////////////////////////////////
-        
+        // Add UI + updateables
         view.addChild(fps);
         app.addUpdateable(fps);
-        
+
         game.circle = circle;
         game.circles = circles;
         game.drawCircle = drawCircle;
         game.update = update;
-        
-        app.addUpdateable(window.opspark.game);
-    }
+
+        app.addUpdateable(game);
+    };
+
+    // Start the game
+    window.opspark.makeGame();
 };
 
-// DO NOT REMOVE THIS CODE //////////////////////////////////////////////////////
+// DO NOT REMOVE THIS CODE ////////////////////////////////////
 if((typeof process !== 'undefined') &&
     (typeof process.versions.node !== 'undefined')) {
-    // here, export any references you need for tests //
     module.exports = init;
 }
