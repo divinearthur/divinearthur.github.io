@@ -24,12 +24,29 @@
         background-position: center;
         background-size: cover;
       }
+
+      .Game-over {
+        font-size: 40px;
+        color: red;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        display: none;
+      }
+
+      .misclick-counter {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        font-size: 24px;
+        color: white;
+      }
     </style>
   </head>
 
   <body class="board">
 
-    <!-- HTML for the box -->
     <div class="box">?</div>
     <div class="misclick-counter">misses: 0</div>
     <div class="Game-over">Divine's Bouncing Box - GAME OVER</div>
@@ -37,109 +54,97 @@
     <script>
       (function () {
         "use strict";
-        var gameOverMessage = jQuuery(".game-over");
+
+        var gameOverMessage = jQuery(".Game-over");
+        var missCounterDisplay = jQuery(".misclick-counter");
         
-        /* global jQuery */
+        var box = jQuery(".box");
+        var board = jQuery(".board");
 
-        //////////////////////////////////////////////////////////////////
-        /////////////////// SETUP DO NOT DELETE //////////////////////////
-        //////////////////////////////////////////////////////////////////
-
-        var box = jQuery(".box"); // reference to the HTML .box element
-        var board = jQuery(".board"); // reference to the HTML .board element
-        var boardWidth = board.width(); // the maximum X-Coordinate of the screen
+        var boardWidth = board.width();
         var boardHeight = jQuery(window).height();
 
-        // update the boardWidth variable when the window is resized
         jQuery(window).on("resize", function () {
           boardWidth = board.width();
         });
 
-        // Every 50 milliseconds, call the update Function (see below)
+        // GAME VARIABLES
+        var positionX = 0;
+        var positionY = 0;
+        var speed = 5;
+        var speedY = 3;
+        var points = 0;
+        var misses = 0;
+        var maxMisses = 5;
+        var gameActive = true;
+
         var interval = setInterval(update, 50);
 
-        // stop propagation
-        box.on("click", function (event){
-          event.stopPropagation(); // prevent board click from firing
+        // BOARD CLICK = MISCLICK (increase miss count)
+        board.on("click", function () {
+          if (!gameActive) return;
+          misses++;
+          missCounterDisplay.text("misses: " + misses);
+
+          if (misses >= maxMisses) {
+            endGame();
+          }
+        });
+
+        // BOX CLICK — do NOT count as miss
+        box.on("click", function (event) {
+          event.stopPropagation();
           handleBoxClick(event);
         });
 
-        // Every time the box is clicked, call the handleBoxClick Function (see below)
-       box.on("click", handleBoxClick);
-
-        // moves the Box to a new position on the screen along the X-Axis
         function moveBoxTo(newPositionX, newPositionY) {
           box.css("left", newPositionX);
           box.css("top", newPositionY);
         }
 
-        // changes the text displayed on the Box
         function changeBoxText(newText) {
           box.text(newText);
         }
 
-        //////////////////////////////////////////////////////////////////
-        /////////////////// YOUR CODE BELOW HERE /////////////////////////
-        //////////////////////////////////////////////////////////////////
-
+        // REAL GAME OVER FUNCTION
         function endGame() {
-
+          gameActive = false;
+          clearInterval(interval);
+          box.hide();
+          gameOverMessage.show();
         }
 
-        // TODO 2 - Variable declarations
-        var positionX = 0;
-        var points = 0;
-        var speed = 5;
-        var positionY = 0;
-        var speedY = 3;
-        var randNum = Math.ran
-
-        // rgb color
-        var colorStr = "rgb(50, 25, 250)";
-        box.css("background-color", colorStr);
-
-        /**
-         * This Function will be called 20 times/second.
-         * Each time it is called, it should move the Box to a new location.
-         * If the box drifts off the screen, turn it around!
-         */
         function update() {
-          positionX = positionX + speed; // Increases positionX by speed.
+          if (!gameActive) return;
+
+          positionX += speed;
           positionY += speedY;
+
           moveBoxTo(positionX, positionY);
 
-          if (positionX < 0) {
-            speed = -speed;
-          } else if (positionX > boardWidth - box.width()) {
+          if (positionX < 0 || positionX > boardWidth - box.width()) {
             speed = -speed;
           }
 
-          if (positionY < 0) {
-            speedY = -speedY;
-          } else if (positionY > boardHeight - box.height()) {
+          if (positionY < 0 || positionY > boardHeight - box.height()) {
             speedY = -speedY;
           }
         }
 
-        /**
-         * This Function will be called each time the box is clicked.
-         * Each time it is called, it should perform each of the following actions:
-         * - increase the points total
-         * - increase the speed
-         * - move the box to the left side of the screen.
-         */
         function handleBoxClick() {
-          positionX = 0;
-          changeBoxText(points);
+          if (!gameActive) return;
+
           points++;
           speed += 3;
-          box.css("background-color", getRandomColor());
+
+          positionX = 0;
+          changeBoxText(points);
+
           if (points % 3 === 0) {
             box.css("background-color", getRandomColor());
           }
         }
 
-        // Added rounding
         function getRandomColor() {
           var r = Math.floor(Math.random() * 255);
           var g = Math.floor(Math.random() * 255);
