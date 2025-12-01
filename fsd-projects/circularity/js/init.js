@@ -1,119 +1,132 @@
 var init = function (window) {
-    'use strict';
-    
-    var 
-        draw = window.opspark.draw,
-        physikz = window.opspark.racket.physikz,
-        
-        app = window.opspark.makeApp(),
-        canvas = app.canvas, 
-        view = app.view,
-        fps = draw.fps('#000');
+'use strict';
+var
+draw = window.opspark.draw,
+physikz = window.opspark.racket.physikz,
 
-    //========================
-    // Variables
-    //========================
-    // TODO 1: Declare our variables
-    var circle; 
-    var circles = [];
-    var game;        // <-- Added so update() always has access
+app = window.opspark.makeApp(),
+canvas = app.canvas,
+view = app.view,
+fps = draw.fps('#000');
 
-    // Helper function: generate random hex color
-    function getRandomColor() {
-        var letters = '0123456789ABCDEF';
-        var color = '#';
-        for (var i = 0; i < 6; i++) {
-            color += letters[Math.floor(Math.random() * 16)];
-        }
-        return color;
-    }
 
-    //========================
-    // Draw one circle
-    //========================
-    // TODO 2: Create a Function to Draw a Circle
-    function drawCircle() {
-        var radius = Math.floor(Math.random() * 21) + 10;
-        var color = getRandomColor();
+window.opspark.makeGame = function() {
 
-        // Code from TODO 2: Draw circle, add velocity, add to view, push to array
-        circle = draw.randomCircleInArea(canvas, true, true, color, 2, radius);
-        physikz.addRandomVelocity(circle, canvas, 5, 5);
-        view.addChild(circle);
-        circles.push(circle);
-    }
+window.opspark.game = {};
+var game = window.opspark.game;
 
-    // Draw 100 circles
-    // DELETE OR COMMENT OUT REPETITIVE CALLS FROM TODO 3
-    // TODO 7: Draw 100 circles using a loop
-    for (var i = 0; i < 100; i++) {
-        drawCircle();
-    }
+///////////////////
+// PROGRAM SETUP //
+///////////////////
 
-    //========================
-    // Update loop
-    //========================
-    function update() {
-        if (!game) return; // Prevents early crashes
+// TODO 1 : Declare and initialize our variables
+var circle;
+var circles = [];
 
-        // TODO 8 & 9: Iterate and update all circles (replaces TODO 4 & 5)
-        for (var i = 0; i < circles.length; i++) {
-            var currentCircle = circles[i]; 
-            
-            // TODO 4: Move the circle
-            physikz.updatePosition(currentCircle);
-            
-            // TODO 5: Keep the circle in bounds
-            game.checkCirclePosition(currentCircle);
-        }
-    }
 
-    //========================
-    // Game object
-    //========================
-    window.opspark.makeGame = function() {
+// TODO 2 : Create a function that draws a circle
+function drawCircle(){
+circle = draw.randomCircleInArea(canvas, true, true, "#999", 2);
+physikz.addRandomVelocity(circle, canvas, 5, 5);
+view.addChild(circle);
+circles.push(circle);
+}
 
-        window.opspark.game = {};
-        game = window.opspark.game;
 
-        // TODO 6: Loop from All Sides
-        game.checkCirclePosition = function(circle) {
-            // Right Boundary: wraps to left
-            if (circle.x > canvas.width) {
-                circle.x = 0;
-            }
-            // Left Boundary: wraps to right
-            if (circle.x < 0) {
-                circle.x = canvas.width;
-            }
-            // Bottom Boundary: wraps to top
-            if (circle.y > canvas.height) {
-                circle.y = 0;
-            }
-            // Top Boundary: wraps to bottom
-            if (circle.y < 0) {
-                circle.y = canvas.height;
-            }
-        };
+// TODO 3 : Call the drawCircle() function
 
-        // Add UI + updateables
-        view.addChild(fps);
-        app.addUpdateable(fps);
+//drawCircle();
+//drawCircle();
+//drawCircle();
+//drawCircle();
+//drawCircle();
 
-        game.circle = circle;
-        game.circles = circles;
-        game.drawCircle = drawCircle;
-        game.update = update;
+// TODO 7 : Use a loop to create multiple circles
+for(var i = 0; i < 100; i++){
+drawCircle(100);
+}
 
-        app.addUpdateable(game);
-    };
+///////////////////
+// PROGRAM LOGIC //
+///////////////////
 
-    // Start the game
-    window.opspark.makeGame();
+/*
+This Function is called 60 times/second, producing 60 frames/second.
+In each frame, for every circle, it should redraw that circle
+and check to see if it has drifted off the screen.
+*/
+function update() {
+// TODO 4 : Update the position of each circle using physikz.updatePosition()
+//physikz.updatePosition(circles[0]);
+//physikz.updatePosition(circles[1]);
+//physikz.updatePosition(circles[2]);
+//physikz.updatePosition(circles[3]);
+//physikz.updatePosition(circles[4]);
+
+// TODO 5 : Call game.checkCirclePosition() on your circles
+//game.checkCirclePosition(circles[0]);
+//game.checkCirclePosition(circles[1]);
+//game.checkCirclePosition(circles[2]);
+//game.checkCirclePosition(circles[3]);
+//game.checkCirclePosition(circles[4]);
+
+// TODO 8 / TODO 9 : Iterate over the array
+for (var i = 0; i < circles.length; i++) {
+// Code to update each circle
+physikz.updatePosition(circles[i]);
+game.checkCirclePosition(circles[i]);
+}
+}
+
+/*
+This Function should check the position of a circle that is passed to the
+Function. If that circle drifts off the screen, this Function should move
+it to the opposite side of the screen.
+*/
+game.checkCirclePosition = function(circle) {
+
+// if the circle has gone past the RIGHT side of the screen then place it on the LEFT
+if ( circle.x > canvas.width ) {
+circle.x = 0;
+}
+
+// TODO 6 : YOUR CODE STARTS HERE //////////////////////
+// if the circle has gone past the LEFT side of the screen then place it on the RIGHT
+if(circle.x < 0){
+circle.x = canvas.width;
+}
+
+// if the circle has gone past the TOP of the screen then place it on the BOTTOM
+if(circle.y < 0){
+circle.y = canvas.height;
+}
+// if the circle has gone past the BOTTOM of the screen then place it on the TOP
+if(circle.y > canvas.height){ //I change this line
+circle.y = 0;
+}
+
+// YOUR TODO 6 CODE ENDS HERE //////////////////////////
+}
+
+/////////////////////////////////////////////////////////////
+// --- NO CODE BELOW HERE --- DO NOT REMOVE THIS CODE --- //
+/////////////////////////////////////////////////////////////
+
+view.addChild(fps);
+app.addUpdateable(fps);
+
+game.circle = circle;
+game.circles = circles;
+game.drawCircle = drawCircle;
+game.update = update;
+
+app.addUpdateable(window.opspark.game);
+}
 };
 
-// DO NOT REMOVE THIS CODE ////////////////////////////////////
+// DO NOT REMOVE THIS CODE //////////////////////////////////////////////////////
 if((typeof process !== 'undefined') &&
-    (typeof process.versions.node !== 'undefined')) {
-    module.exports = init;
+(typeof process.versions.node !== 'undefined')) {
+// here, export any references you need for tests //
+module.exports = init;
 }
