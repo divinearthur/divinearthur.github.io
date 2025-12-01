@@ -1,56 +1,61 @@
-// Ensure window.opspark exists
-window.opspark = window.opspark || {};
-
-window.opspark.makeApp = function(updateables) {
-    var updateList = updateables ? [].concat(updateables) : [];
-    
-    // Get canvas + stage
-    var canvas = document.getElementById("canvas");
-    var stage = new createjs.Stage(canvas);
-
-    // Create a container for all drawings
-    var view = new createjs.Container();
-    stage.addChild(view);
-
-    // App object returned
-    var app = {
-        canvas: canvas,
-        stage: stage,
-        view: view,
-
-        addUpdateable: function(updateable) {
-            updateList.push(updateable);
-            return app;
-        },
-
-        removeUpdateable: function(updateable) {
-            var index = updateList.indexOf(updateable);
-            if (index !== -1) updateList.splice(index, 1);
-            return app;
-        },
-
-        update: function() {
-            for (var i = 0; i < updateList.length; i++) {
-                if (typeof updateList[i].update === "function") {
-                    updateList[i].update();
+(function (window) {
+    window.opspark = window.opspark || {};
+   
+    window.opspark.makeApp = function (updateable) {
+        var
+            _stage,
+            _canvas,
+            _updateable,
+            _app;
+       
+        _stage  = new createjs.Stage(canvas);
+        _canvas = document.getElementById('canvas');
+        _updateable = (updateable) ? [].concat(updateable) : [];
+       
+        _app = {
+            canvas: _canvas,
+            stage: _stage,
+            view: new createjs.Container(),
+           
+            addUpdateable: function(updateable) {
+                _updateable.push(updateable);
+                return _app;
+            },
+           
+            removeUpdateable: function(updateable) {
+                var index = _updateable.indexOf(updateable);
+                if (index !== -1) {
+                    _updateable.splice(index, 1);
                 }
+                return _app;
+            },
+
+
+            update: function(e) {
+                for (var i = 0; i < _updateable.length; i++) {
+                    _updateable[i].update();
+                }
+                // always update the stage last //
+                _stage.update();
             }
-            stage.update();
+        };
+       
+       
+        window.addEventListener('resize', resizeCanvas, false);
+        function resizeCanvas(e) {
+            _canvas.width = window.innerWidth;
+            _canvas.height = window.innerHeight;
+            if (e) { _app.update(e) }
         }
+        resizeCanvas();
+       
+        //_app.stage.addChild(draw.rect(canvas.width, canvas.height, null, '#4F5661', 1));
+        _app.stage.addChild(_app.view);
+        createjs.Ticker.setFPS(60);
+        createjs.Ticker.on('tick', _app.update);
+
+
+        return _app;
     };
+}(window));
 
-    // Resize (kept simple)
-    function resize() {
-        canvas.width = 500;
-        canvas.height = 500;
-        stage.update();
-    }
-    window.addEventListener("resize", resize);
-    resize();
-
-    // Ticker
-    createjs.Ticker.setFPS(60);
-    createjs.Ticker.on("tick", app.update);
-
-    return app;
-};
